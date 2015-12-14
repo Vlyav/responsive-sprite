@@ -1,0 +1,63 @@
+/**
+ Sass mixin and function to use responsive sprite with auto position.
+ Author  Vladimir Yaborskiy <vlyav@smile.fr>
+ Usage :
+    @include responsive-sprite($sprite, icon-name);
+ Return:
+    background-image: url('../images/mobile-s5c86456413.png');
+    background-position: 60.68205% 0;
+    -webkit-background-size: 2221.2766% 1879.31034%;
+    -moz-background-size: 2221.2766% 1879.31034%;
+    -ms-background-size: 2221.2766% 1879.31034%;
+    -o-background-size: 2221.2766% 1879.31034%;
+    background-size: 2221.2766% 1879.31034%;
+*/
+$sprite: sprite-map("../images/mobile/*.png", $spacing: 5px, $layout: horizontal);
+
+@function modalInt($n) {
+  @if $n < 0 {
+    $n: $n * (-1);
+  }
+  @return $n;
+}
+
+@mixin responsive-sprite($map, $icon){
+
+  $icon-file: sprite-file($map, $icon);
+  $icon-width: image-width($icon-file);
+  $icon-height: image-height($icon-file);
+
+  $sprite-file: sprite-path($map);
+  $sprite-map: sprite-url($map);
+
+  $sprite-width: image-width($sprite-file);
+  $sprite-height: image-height($sprite-file);
+
+  $background-size-width: ($sprite-width / $icon-width) * 100%;
+  $background-size-height: ($sprite-height / $icon-height) * 100%;
+
+  $icon-position-x: nth(sprite-position($map, $icon), 1);
+  $icon-position-y: nth(sprite-position($map, $icon), 2);
+
+  $background-position-y: 0;
+  @if $icon-position-y != 0 {
+    $background-position-y: (modalInt($icon-position-y) / ($sprite-height - $icon-height) * 100%);
+  } @else {
+    $background-position-y: $icon-position-y;
+  }
+
+  $background-position-x: 0;
+  @if $icon-position-x != 0 {
+    $background-position-x: (modalInt($icon-position-x) / ($sprite-width - $icon-width) * 100%);
+  } @else {
+    $background-position-x: $icon-position-x;
+  }
+
+  background-image: $sprite-map;
+  background-position: $background-position-x $background-position-y;
+  -webkit-background-size: $background-size-width $background-size-height;
+  -moz-background-size: $background-size-width $background-size-height;
+  -ms-background-size: $background-size-width $background-size-height;
+  -o-background-size: $background-size-width $background-size-height;
+  background-size: $background-size-width $background-size-height;
+}
